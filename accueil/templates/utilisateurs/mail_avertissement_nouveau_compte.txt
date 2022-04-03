@@ -1,0 +1,4 @@
+Le compte {email} a été créé.
+Il convient de vérifier qu'il est légitime et de le valider à cette adresse:
+
+{lien}

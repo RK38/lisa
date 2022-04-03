@@ -1,0 +1,63 @@
+{% load static %}
+{% load flatpages %}
+{% get_flatpages as flatpages %}
+<!DOCTYPE html>
+<html  class="no-js" lang="fr" dir="ltr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta http-equiv="x-ua-compatible" content="ie=edge"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <link rel="stylesheet" href="{% static 'css/lisa.css' %}"/>
+  <title>{% block titre %}{{administration.nom}}{% endblock %}</title>
+  {% block head %}
+  {% endblock %}
+</head>
+<body>
+  {% if administration.mode_test %}
+    <div style="color:red;">
+      MODE TEST : TOUS LES COMPTES UTILISATEURS, LES COMPTES ANONYMES ET LES RÉPONSES SERONT SUPPRIMÉS AVANT LE DÉBUT EFFECTIF DU SONDAGE
+    </div>
+  {% endif %}
+  <div>
+    {% if user.is_authenticated %}
+      {{user.email}} &nbsp; &nbsp;
+    {% endif %}
+    {% for page in flatpages %}
+        <a href="{{ page.url }}">{{ page.title }}</a> &nbsp; &nbsp;
+    {% endfor %}
+        <a href="{% url 'accueil' %}">Accueil</a>
+    {% if user.is_authenticated %}
+      &nbsp; &nbsp; <a href="{% url 'deconnexion' %}">Déconnexion</a>&nbsp; &nbsp; <a href={% url 'resultats' %}>Résultats du sondage</a>&nbsp; &nbsp;
+    {% endif %}
+    {% if user.is_authenticated and user.anonyme %}
+        &nbsp; &nbsp; Code contrôle : <span style="color:red;">{{user.anonyme.code}}</span>
+    {% endif %}
+  </div>
+
+  <h1>{{administration.nom}}</h1>
+  {% if administration.debut %}
+    {% if administration.fin %}
+      <p>Sondage ouvert du {{administration.debut}} au {{administration.fin}}</p>
+    {% else %}
+      <p>Sondage ouvert à partir du {{administration.debut}}</p>
+    {% endif %}
+  {% else %}
+  {% if administration.fin %}
+    <p>Sondage clos le {{administration.fin}}</p>
+    {% endif %}
+  {% endif %}
+  {% if messages %}
+  {% for message in messages %}
+    <div {% class = "callout {{message.tags}}">
+      {{message|safe|linebreaks}}
+    </div>
+  {% endfor %}
+{% endif %}
+
+  {% block content %}
+  {% endblock %}
+</body>
+</html>

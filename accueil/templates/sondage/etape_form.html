@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<table border="1" style="color:blue;">
+  <tr>
+    <th>RAPPEL : </th>
+    <th>
+      bouton radio (petits ronds) : choix unique
+    </th>
+    <th>
+      cases à cocher (petits carrés) : plusieurs choix possibles
+    </th>
+  </tr>
+  <tr>
+    <td></td>
+    <td>
+      <div>
+          <label for="id_0"><input type="radio" name="0" value="7" required="" id="id_0" checked="">
+            Blanc
+          </label>
+          <label for="id_0"><input type="radio" name="0" value="7" required="" id="id_0" checked="">
+            Rouge
+          </label>
+      </div>
+    </td>
+    <td>
+      <div>
+          <label for="id_1"><input type="checkbox" name="Le bourgogne" value="7" required="" id="id_1" checked="">
+            Blanc
+          </label>
+          <label for="id_1"><input type="checkbox" name="Le bourgogne" value="7" required="" id="id_1" checked="">
+            Rouge
+          </label>
+      </div>
+    </td>
+  </tr>
+</table>
+<h2>{{etape}}</h2>
+<h3>{{etape.introduction}}</h3>
+
+
+<form method="post" action="">
+  {% csrf_token %}
+
+  {{ form.non_field_errors }}
+
+  {% for hidden_field in form.hidden_fields %}
+    {{ hidden_field.errors }}
+    {{ hidden_field }}
+  {% endfor %}
+
+  <table border="1">
+    {% for field in form.visible_fields %}
+      <tr><th>{{ field.label_tag }}</th></tr>
+      <tr>
+        <td>{{ field.help_text }}</td>
+        <td>
+          {{ field.errors }}
+          {{ field }}
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+  {% if administration.ouvert == administration.OUVERT %}
+    <button type="submit">Enregistrer</button>
+    {% endif %}
+</form>
+
+{% if etape.numero_precedent %}
+  <p><a href={% url 'etape' etape.numero_precedent %}>Étape précédente</a></p>
+{% endif %}
+    {% comment %}
+    {% if etape.numero_suivant %}
+    <!--  <p><a href={% url 'etape' etape.numero_suivant %}>Étape suivante</a></p>
+    {% else %}
+      <p><a href={% url 'fin' %}>Fin du sondage</a></p>-->
+    {% endif %}
+    {% endcomment %}
+{% endblock %}

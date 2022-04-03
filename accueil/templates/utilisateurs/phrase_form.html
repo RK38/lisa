@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Choix de votre phrase secrète</h2>
+<p>Indiquez ainsi une phrase secrète (au moins 10 caractères et au plus 150). Vous l'écrirez
+  une seconde fois afin d'être certain de ne pas faire d'erreur. Attention,
+  ne l'oubliez pas (écrivez-la ou enregistrez-la sur votre ordinateur) :
+  sans cette phrase, vous ne serez plus en mesure d'accéder au sondage !
+</p>
+
+<form method = "post" action = "">
+    {% csrf_token %}
+    {{form.as_p}}
+    <input type = "submit" value = "Connexion" class="button"/>
+</form>
+
+{% endblock %}

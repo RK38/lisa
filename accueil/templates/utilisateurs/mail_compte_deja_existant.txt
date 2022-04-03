@@ -1,0 +1,8 @@
+Bonjour,
+
+Le site {nom} a enregistré une demande d'ouverture de compte
+pour cet l'email {email}. Or un compte existe déjà pour cette adresse.
+Si vous souhaitez récupérer votre mot de passe, utilisez la fonction
+de récupération de mot de passe de la page de connexion.
+
+Si vous n'êtes pas à l'origine de cette demande, vous pouvez ignorer de ce message.

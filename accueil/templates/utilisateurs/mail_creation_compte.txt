@@ -1,0 +1,7 @@
+Bonjour,
+
+Le site {nom} a enregistré une demande d'ouverture de compte
+pour cet l'email {email}. Si vous n'êtes pas à l'origine de cette demande,
+ne tenez pas compte de ce message.
+
+Sinon, cliquez sur ce lien afin de confirmer votre adresse email et choisir votre mot de passe: {lien}

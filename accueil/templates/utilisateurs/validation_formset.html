@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Validation</h2>
+<p>
+  Ce formulaire permet de valider les demandes d'inscription au sondage
+</p>
+<form method = "post" action = "">
+    {% csrf_token %}
+    <table>
+    {{formset.as_table}}
+    </table>
+    <input type = "submit" value = "Enregistrer" class="button"/>
+</form>
+
+<h2>Administrateurs</h2>
+  Voici la liste des administrateurs:
+<ul>
+  {% for admin in administrateurs %}
+    <li>{{admin}}</li>
+  {% endfor %}
+</ul>
+{% endblock %}

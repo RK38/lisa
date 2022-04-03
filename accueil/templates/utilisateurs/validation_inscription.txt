@@ -1,0 +1,9 @@
+Bonjour,
+
+Votre inscription au sondage {{site}} a été validée.
+Vous pouvez vous connecter pour y répondre :
+{{url}}
+(il faudra choisir votre mot de passe si vous ne l'avez pas encore fait,
+en cliquant sur lien indiqué dans l'email reçu lors de la création
+de votre compte ; si vous ne l'avez pas reçu, cliquez sur "mot de passe
+erdu ?" sur la page d'accueil du site)

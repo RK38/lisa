@@ -1,0 +1,15 @@
+Bonjour,
+
+Vous venez de vous déconnecter (ou vous avez été automatiquement déconnecté)
+du site {{site}}. Lors de votre déconnexion, le code de contrôle
+de vos réponses au sondage était
+
+{{code}}
+
+Ce code est calculé en fonction de vos
+réponses (commentaires inclus). Le moindre changement dans l'une de vos réponses
+--ou même dans l'énoncé d'une réponse -- modifiera complètement ce code.
+Il vous permet de vous assurer que personne n'a modifié vos réponses postérieurement
+à votre participation et, par là, d'assurer l'intégrité du sondage.
+
+Merci encore d'avoir pris le temps de participer !

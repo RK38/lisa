@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Création admin</h2>
+<p>
+  Indiquez l'email du nouvel admin
+</p>
+
+<form method = "post" action = "">
+    {% csrf_token %}
+    {{form.as_p}}
+    <input type = "submit" value = "enregistrer" class="button"/>
+</form>
+
+{% endblock %}

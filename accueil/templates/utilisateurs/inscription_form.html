@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load static %}
+  {% block header %}
+
+  {% endblock %}
+  {% block content %}
+          <section>
+            <h2>Création de votre compte</h2>
+            <p>La création du compte se fait en plusieurs étapes, nécessaires pour d'une part certifier que les
+              personnes participant au sondage sont habilitées à le faire et qu'elles ne participent qu'une seule fois,
+              et d'autre part garantir l'anonymat des réponses.
+            </p>
+            <p>Les réponses seront en effet totalement anonymes. Pas parce que les responsables
+              du sondage s'engagent à ne pas les diffuser, ce qui ne serait pas un anonymat complet
+              et n'exclurait pas une fuite accidentelle. Mais parce que ce logiciel est conçu
+              pour que, une fois l'utilisateur déconnecté, tout lien entre ses réponses et son identité soit supprimé de la base de donnée:
+              c'est un véritable anonymat. Même les responsables du sondage ne peuvent faire le lien entre les personnes qui ont répondu et leurs réponses.
+            </p>
+
+            <p>Voici les étapes de la création de votre compte:
+            <ul>
+              <li>Vous indiquerez ci-dessous votre adresse email et validerez. Choisissez une adresse connue de l'administrateur
+              du sondage, afin qu'il puisse reconnaître que votre inscription est légitime (par exemple
+              votre adresse en @ac-grenoble.fr).</li>
+              <li>Vous recevrez un email comportant un lien qui vous permettra de choisir votre mot passe</li>
+              <li>Un administrateur validera votre inscription</li>
+              <li>Puis, lors de votre première connexion, vous serez invité à choisir une phrase secrète, grâce laquelle sera créé pour vous un compte anonyme.
+                Le lien entre votre compte nominatif et votre compte anonyme ne restera actif que le temps de répondre au sondage. Il sera supprimé à votre déconnexion.<br>
+                <span style="color:red;">ATTENTION</span> : si vous oubliez cette phrase, vous ne serez plus en mesure de rétablir le lien avec votre compte anonyme.
+                Vous ne pourrez donc plus compléter ou modifier vos réponses au sondage.
+                Car cette phrase sera pas mémorisée par le site et il ne sera, contrairement au mot de passe,
+                pas possible de la modifier (ni de la retrouver).
+                <span style="color:red;">Notez-la donc très soigneusement</span> : chaque détail compte (accent, espace, majuscules, virgule,...) !
+                Une suggestion est d'enregistrer d'abord la phrase dans un petit fichier texte, puis de la copier-coller ici lorsque c'est nécessaire.
+            </ul>
+              Vous obtiendrez plus d'informations en cliquant sur "Informations" en haut de page.
+            </p>
+            <p>
+              Pour le moment donc, créons votre compte nominatif:
+            </p>
+
+            <form action = "" method = "post">
+              {% csrf_token %}
+              {{form.as_p}}
+              <input type = "submit" class="button" value = "Envoyer" />
+            </form>
+          </section>
+  {% endblock content %}
