@@ -52,11 +52,8 @@ class Option(models.Model):
         return self.option
 
 class ReponseOption(models.Model):
-    anonyme=models.ForeignKey(Anonyme, on_delete=models.CASCADE)
+    anonyme=models.OneToOneField(Anonyme, on_delete=models.CASCADE)
     options=models.ManyToManyField(Option) # toutes les options auxquelles a été répondu "oui"
-
-    class Meta():
-        constraints=[models.UniqueConstraint(fields=["anonyme"], name="reponse_option_cle_primaire")]
 
 class Commentaire(models.Model):
     anonyme=models.ForeignKey(Anonyme, on_delete=models.CASCADE)
