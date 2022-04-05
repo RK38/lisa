@@ -11,7 +11,7 @@ User=get_user_model()
 from django.urls import reverse, reverse_lazy
 from django.contrib import messages
 from .models import Etape, ReponseOption, Commentaire
-from accueil.models import get_administration
+from accueil.models import get_administration, Anonyme
 
 
 class EtapeForm(forms.Form):
@@ -109,3 +109,11 @@ class EtapeView(UserPassesTestMixin, generic.FormView):
         else:
             messages.error(request, "Votre réponse n'a pas été enregistrée car le sondage est clos")
         return super().form_valid(form)
+
+class ResultatView(generic.TemplateView):
+    template_name="sondage/resultats.html"
+
+    def get_context_data(self, *args, **kwargs):
+        context=super().get_context_data(*args, **kwargs)
+        context["nombre_anonymes"]=Anonyme.objects.all().count()
+        return context

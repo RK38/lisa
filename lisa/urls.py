@@ -33,6 +33,6 @@ urlpatterns = [
     path("sondage", TemplateView.as_view(template_name="sondage/sondage.html"), name="sondage"),
     path("etape/<int:numero>", s_views.EtapeView.as_view(), name="etape"),
     path("fin", TemplateView.as_view(template_name="sondage/fin.html"), name="fin"),
-    path("resultats", TemplateView.as_view(template_name="sondage/resultats.html"), name="resultats"),
+    path("resultats", s_views.ResultatView.as_view(), name="resultats"),
     path('pages/', include('django.contrib.flatpages.urls')),
     ]
