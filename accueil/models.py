@@ -166,7 +166,6 @@ class Anonyme(models.Model):
         Il s'agit de prévenir toute tentative de rompre l'anonymat en comparant
         l'ordre dans lequels les comptes nominatifs et anonymes ont été
         enregistrés. Est appelé à chaque enregistrement d'un nouveau compte anonyme."""
-        import pdb; pdb.set_trace()
         anonymes=Anonyme.objects.filter(user=None)
         if anonymes.exists():
             anonyme=random.choice(anonymes)
