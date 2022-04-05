@@ -34,5 +34,5 @@ urlpatterns = [
     path("etape/<int:numero>", s_views.EtapeView.as_view(), name="etape"),
     path("fin", TemplateView.as_view(template_name="sondage/fin.html"), name="fin"),
     path("resultats", TemplateView.as_view(template_name="sondage/resultats.html"), name="resultats"),
-    path('', include('django.contrib.flatpages.urls')),
+    path('pages/', include('django.contrib.flatpages.urls')),
     ]
