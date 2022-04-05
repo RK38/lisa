@@ -3,7 +3,7 @@ from django.utils import timezone
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.conf import settings
-from django.db import models
+from django.db import models, transaction
 from django.contrib.auth.models import AbstractUser, UserManager, AnonymousUser, BaseUserManager
 
 
@@ -159,6 +159,23 @@ class Anonyme(models.Model):
         for commentaire in Commentaire.objects.filter(anonyme=self):
             chaine+=commentaire.commentaire
         return hashlib.sha256(chaine.encode("UTF-8")).hexdigest()[0:10]
+
+    @staticmethod
+    def melange():
+        """Sélectionne aléatoirement un anonyme non connecté, le supprime et le réenregistre.
+        Il s'agit de prévenir toute tentative de rompre l'anonymat en comparant
+        l'ordre dans lequels les comptes nominatifs et anonymes ont été
+        enregistrés. Est appelé à chaque enregistrement d'un nouveau compte anonyme."""
+        import pdb; pdb.set_trace()
+        anonymes=Anonyme.objects.filter(user=None)
+        if anonymes.exists():
+            anonyme=random.choice(anonymes)
+            hash=anonyme.hash
+            with transaction.atomic():
+                if not hasattr(anonyme, "user"):  # prévient le cas -- improbable -- où le participant s'est connecté à ce moment
+                    anonyme.delete()
+                    anonyme=Anonyme(hash=hash) # Le compte anonyme n'étant pas connecté, hash_phrase est actuellement à None
+                    anonyme.save()
 
 
 class LogDeconnexion(models.Model):

@@ -79,6 +79,7 @@ restera établi tant que vous serez connecté. Ce lien sera rompu lors de votre 
 à condition de connaître votre phrase clé:\n\n \
 {form.cleaned_data['phrase']}\n\n \
 Si vous ne l\'avez pas mémorisée, écrite ou enregistrée, faites-le maintenant. En cas d\'oubli, il sera impossible de la retrouver: ")
+        Anonyme.melange()
         return HttpResponseRedirect(reverse("accueil"))
 
 class PhraseForm2(forms.Form):
