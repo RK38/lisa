@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
+from django.contrib.auth.decorators import login_required
 from accueil import views as a_views
 from sondage import views as s_views
 
@@ -30,9 +31,9 @@ urlpatterns = [
     path("connecte_anonyme", a_views.ConnecteAnonyme.as_view(), name="connecte_anonyme"),
     path("validation", a_views.Validation.as_view(), name="validation"),
     path("createadmin", a_views.CreateAdmin.as_view(), name="create_admin"),
-    path("sondage", TemplateView.as_view(template_name="sondage/sondage.html"), name="sondage"),
+    path("sondage", login_required(TemplateView.as_view(template_name="sondage/sondage.html")), name="sondage"),
     path("etape/<int:numero>", s_views.EtapeView.as_view(), name="etape"),
-    path("fin", TemplateView.as_view(template_name="sondage/fin.html"), name="fin"),
+    path("fin", login_required(TemplateView.as_view(template_name="sondage/fin.html")), name="fin"),
     path("resultats", s_views.ResultatView.as_view(), name="resultats"),
     path('pages/', include('django.contrib.flatpages.urls')),
     ]
