@@ -27,5 +27,5 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         users=get_all_logged_out_users().exclude(anonyme=None)
         for user in users:
-            if user.anonyme: # vérifions que le statut n'a pas changé
+            if user.anonyme==None: # vérifions que le statut n'a pas changé
                 user.deconnecte_anonyme()
