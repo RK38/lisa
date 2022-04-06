@@ -25,7 +25,7 @@ class Command(BaseCommand):
     help = "Lance la déconnexion automatique des utilisateurs distraits"
 
     def handle(self, *args, **options):
-        users=get_all_logged_out_users().exclude(anonyme=None)
+        users=get_all_logged_out_users().exclude(is_staff=True).exclude(anonyme=None)
         for user in users:
             if user.anonyme==None: # vérifions que le statut n'a pas changé
                 user.deconnecte_anonyme()
