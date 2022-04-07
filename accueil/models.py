@@ -165,23 +165,24 @@ class Anonyme(models.Model):
         Il s'agit de prévenir toute tentative de rompre l'anonymat en comparant
         l'ordre dans lequels les comptes nominatifs et anonymes ont été
         enregistrés. Est appelé à chaque enregistrement d'un nouveau compte anonyme."""
-        from sondage.models import ReponseOption, Option
-        anonymes=Anonyme.objects.filter(user=None)
-        if anonymes.exists():
-            anonyme=random.choice(anonymes)
-            hash=anonyme.hash
-            with transaction.atomic():
-                if not hasattr(anonyme, "user"):  # prévient le cas -- improbable -- où le participant s'est connecté à ce moment
-                    if hasattr(anonyme, "reponseoption"):
-                        options=list(anonyme.reponseoption.options.all())
-                    else:
-                        options= Option.objects.none()
-                    anonyme.delete()
-                    anonyme=Anonyme(hash=hash) # Le compte anonyme n'étant pas connecté, hash_phrase est actuellement à None
-                    anonyme.save()
-                    reponseoption=ReponseOption(anonyme=anonyme)
-                    reponseoption.save()
-                    reponseoption.options.set(options)
+        pass
+        # from sondage.models import ReponseOption, Option
+        # anonymes=Anonyme.objects.filter(user=None)
+        # if anonymes.exists():
+        #     anonyme=random.choice(anonymes)
+        #     hash=anonyme.hash
+        #     with transaction.atomic():
+        #         if not hasattr(anonyme, "user"):  # prévient le cas -- improbable -- où le participant s'est connecté à ce moment
+        #             if hasattr(anonyme, "reponseoption"):
+        #                 options=list(anonyme.reponseoption.options.all())
+        #             else:
+        #                 options= Option.objects.none()
+        #             anonyme.delete()
+        #             anonyme=Anonyme(hash=hash) # Le compte anonyme n'étant pas connecté, hash_phrase est actuellement à None
+        #             anonyme.save()
+        #             reponseoption=ReponseOption(anonyme=anonyme)
+        #             reponseoption.save()
+        #             reponseoption.options.set(options)
 
 
 class LogDeconnexion(models.Model):
