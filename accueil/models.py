@@ -165,24 +165,29 @@ class Anonyme(models.Model):
         Il s'agit de prévenir toute tentative de rompre l'anonymat en comparant
         l'ordre dans lequels les comptes nominatifs et anonymes ont été
         enregistrés. Est appelé à chaque enregistrement d'un nouveau compte anonyme."""
-        pass
-        # from sondage.models import ReponseOption, Option
-        # anonymes=Anonyme.objects.filter(user=None)
-        # if anonymes.exists():
-        #     anonyme=random.choice(anonymes)
-        #     hash=anonyme.hash
-        #     with transaction.atomic():
-        #         if not hasattr(anonyme, "user"):  # prévient le cas -- improbable -- où le participant s'est connecté à ce moment
-        #             if hasattr(anonyme, "reponseoption"):
-        #                 options=list(anonyme.reponseoption.options.all())
-        #             else:
-        #                 options= Option.objects.none()
-        #             anonyme.delete()
-        #             anonyme=Anonyme(hash=hash) # Le compte anonyme n'étant pas connecté, hash_phrase est actuellement à None
-        #             anonyme.save()
-        #             reponseoption=ReponseOption(anonyme=anonyme)
-        #             reponseoption.save()
-        #             reponseoption.options.set(options)
+        from sondage.models import ReponseOption, Option, Commentaire
+        anonymes=Anonyme.objects.filter(user=None)
+        if anonymes.exists():
+            anonyme=random.choice(anonymes)
+            hash=anonyme.hash
+            with transaction.atomic():
+                if not hasattr(anonyme, "user"):  # prévient le cas -- improbable -- où le participant s'est connecté à ce moment
+                    if hasattr(anonyme, "reponseoption"):
+                        options=list(anonyme.reponseoption.options.all())
+                    else:
+                        options= Option.objects.none()
+                    commentaires=Commentaire.objects.filter(anonyme=anonyme)
+                    liste_commentaires=[(commentaire.etape, commentaire.commentaire) for commentaire in commentaires]
+                    anonyme.delete()
+                    anonyme=Anonyme(hash=hash) # Le compte anonyme n'étant pas connecté, hash_phrase est actuellement à None
+                    anonyme.save()
+                    reponseoption=ReponseOption(anonyme=anonyme)
+                    reponseoption.save()
+                    reponseoption.options.set(options)
+                    for item in liste_commentaires:
+                        commentaire=Commentaire(anonyme=anonyme, etape=item[0], commentaire=item[1])
+                        commentaire.save()
+
 
 
 class LogDeconnexion(models.Model):
