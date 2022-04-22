@@ -62,3 +62,4 @@ class Commentaire(models.Model):
 
     class Meta():
         constraints=[models.UniqueConstraint(fields=["etape", "anonyme"], name="commentaire_cle_primaire")]
+        ordering=["anonyme", "etape"]

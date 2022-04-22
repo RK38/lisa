@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.template.loader import render_to_string
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.mixins import UserPassesTestMixin
@@ -23,15 +23,23 @@ from .models import Anonyme, LogDeconnexion, get_administration
 
 class Accueil(generic.View):
     def get(self, request):
+        administration=get_administration()
         user=self.request.user
         if not user.is_authenticated:
             return HttpResponseRedirect(reverse('login'))
-        elif user.is_staff:
-            return HttpResponseRedirect("admin")
+        if user.admin_emails:
+            return HttpResponseRedirect(reverse('validation'))
+        if user.admin_stats:
+            return HttpResponseRedirect(reverse('statistiques'))
+        if user.is_staff:
+            return HttpResponseRedirect('admin/')
         elif not user.valide:
             return HttpResponseRedirect(reverse('attente_validation'))
         elif not user.cle_choisie:
-            return HttpResponseRedirect(reverse('phrase'))
+            if administration.ouvert:
+                return HttpResponseRedirect(reverse('phrase'))
+            if administration.clos:
+                return HttpResponse("Le sondage est clos. Vous ne pouvez plus y participer.")
         elif not user.anonyme:
             return HttpResponseRedirect(reverse('connecte_anonyme'))
         return HttpResponseRedirect(reverse('sondage'))
@@ -62,7 +70,7 @@ class Phrase(UserPassesTestMixin, generic.FormView):
 
     def test_func(self):
         user=self.request.user
-        return user.is_authenticated and user.valide
+        return user.is_authenticated and user.valide and get_administration().ouvert
 
     def post(self, request):
         user=request.user
@@ -196,10 +204,11 @@ class Validation(LoginRequiredMixin, UserPassesTestMixin, ModelFormSetView):
     factory_kwargs = {'extra': 0}
 
     def test_func(self):
-        return self.request.user.is_staff
+        user=self.request.user
+        return user.admin_emails
 
     def get_queryset(self):
-        return User.objects.filter(is_staff=False).order_by("valide")
+        return User.objects.filter(is_staff=False, admin_stats=False, admin_emails=False).order_by("valide")
 
     def formset_valid(self, formset):
         if formset.has_changed():
@@ -211,12 +220,14 @@ class Validation(LoginRequiredMixin, UserPassesTestMixin, ModelFormSetView):
 
     def get_context_data(self, *args, **kwargs):
         context=super().get_context_data(*args, **kwargs)
+        context["administrateurs_emails"]=User.objects.filter(admin_emails=True)
+        context["administrateurs_stats"]=User.objects.filter(admin_stats=True)
         context["administrateurs"]=User.objects.filter(is_staff=True)
         return context
 
 class CreateAdmin(UserPassesTestMixin, generic.CreateView):
     model=User
-    fields=["email"]
+    fields=["email", "admin_emails", "admin_stats", "is_staff"]
     template_name="utilisateurs/create_admin_form.html"
 
     def test_func(self):
@@ -225,9 +236,9 @@ class CreateAdmin(UserPassesTestMixin, generic.CreateView):
 
     def form_valid(self, form):
         user=form.save(commit=False)
-        admin=Group.objects.get(name="admin")
-        user.is_staff=True
         user.set_password(User.objects.make_random_password(10))
         user.save()
-        user.groups.add(admin)
+        if user.is_staff:
+            admin=Group.objects.get(name="admin")
+            user.groups.add(admin)
         return HttpResponseRedirect(reverse("accueil"))

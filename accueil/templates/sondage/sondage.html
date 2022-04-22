@@ -3,9 +3,9 @@
 {% block content %}
 <h2>Début du sondage</h2>
 {{administration.avertissement_debut|safe}}
-{% if administration.ouvert == administration.OUVERT %}
+{% if administration.ouvert %}
   <p><a href="{%url 'etape' 1 %}">Étape 1</a>
-{% elif administration.ouvert ==  administration.TROP_TOT %}
+{% elif administration.etat ==  administration.TROP_TOT %}
   <p><em>Le sondage n'est pas encore ouvert. Patience !</em></p>
 {% else %}
   <p><em>Le sondage est clos. Vous pouvez accéder à vos réponses, mais vous ne pouvez plus les modifier </em>: <a href="{%url 'etape' 1 %}">Étape 1</a></p>

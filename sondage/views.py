@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.template.loader import render_to_string
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
@@ -10,7 +10,7 @@ from django.contrib.auth import get_user_model
 User=get_user_model()
 from django.urls import reverse, reverse_lazy
 from django.contrib import messages
-from .models import Etape, ReponseOption, Commentaire
+from .models import Etape, Option, ReponseOption, Commentaire, CasesACocher
 from accueil.models import get_administration, Anonyme
 
 
@@ -88,7 +88,7 @@ class EtapeView(UserPassesTestMixin, generic.FormView):
         cd=form.cleaned_data
         reponseoption, created=ReponseOption.objects.get_or_create(anonyme=self.anonyme)
         etape=self.etape
-        if administration.ouvert==administration.OUVERT:
+        if administration.etat==administration.OUVERT:
             for casesacocher in etape.casesacochers.all():
                 if casesacocher.unique:
                     for option in casesacocher.options.all():
@@ -113,7 +113,62 @@ class EtapeView(UserPassesTestMixin, generic.FormView):
 class ResultatView(generic.TemplateView):
     template_name="sondage/resultats.html"
 
+    def get(self, request, *args, **kwargs):
+        administration=get_administration()
+        user=request.user
+        if user.is_authenticated and (user.admin_stats or (user.cle_choisie and administration.clos)):
+            return HttpResponseRedirect(reverse("statistiques"))
+        return super().get(request, *args, **kwargs)
+
     def get_context_data(self, *args, **kwargs):
         context=super().get_context_data(*args, **kwargs)
         context["nombre_anonymes"]=Anonyme.objects.all().count()
+        return context
+
+class StatistiqueView(LoginRequiredMixin, UserPassesTestMixin, generic.TemplateView):
+    template_name="sondage/statistiques.html"
+
+    def test_func(self):
+        user=self.request.user
+        administration=get_administration()
+        return user.admin_stats or (user.cle_choisie and administration.clos)
+
+    def get_context_data(self, *args, **kwargs):
+        context=super().get_context_data(*args, **kwargs)
+        context["nombre_anonymes"]=Anonyme.objects.all().count()
+        context["etapes"]=Etape.objects.all()
+        for etape in context["etapes"]:
+            etape.casesacochers_s=CasesACocher.objects.filter(etape=etape)
+            for casesacocher in etape.casesacochers_s:
+                casesacocher.options_s=Option.objects.filter(casesacocher=casesacocher)
+                for option in casesacocher.options_s:
+                    option.nombre=ReponseOption.objects.filter(options=option).count()
+        return context
+
+def ajaxEffectif(request):
+    casesacocher=CasesACocher.objects.get(id=request.GET.get("id_casesacocher"))
+    id_options=request.GET.get('id_options') or []
+    if id_options:
+        id_options=[int(k) for k in id_options.rstrip(";").split(";")]
+    anonymes=Anonyme.objects.all()
+    for id_option in id_options:
+        anonymes=anonymes.filter(reponseoption__options__id=id_option)
+    toutes=anonymes.count()
+    au_moins_une=Anonyme.objects.filter(reponseoption__options__id__in=id_options).distinct().count()
+    return JsonResponse({'toutes':toutes, 'au_moins_une': au_moins_une})
+
+class CommentaireView(LoginRequiredMixin, UserPassesTestMixin, generic.TemplateView):
+    template_name="sondage/commentaires.html"
+
+    def test_func(self):
+        user=self.request.user
+        return user.admin_stats
+
+    def get_context_data(self, *args, **kwargs):
+        context=super().get_context_data(*args, **kwargs)
+        commentaires=Commentaire.objects.exclude(commentaire="")
+        anonymes=Anonyme.objects.filter(commentaire__in=commentaires).distinct()
+        context["anonymes"]=anonymes
+        for anonyme in anonymes:
+            anonyme.commentaires=Commentaire.objects.filter(anonyme=anonyme).exclude(commentaire="")
         return context

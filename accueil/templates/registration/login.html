@@ -21,8 +21,12 @@
     <input type = "submit" value = "Connexion" class="button"/>
     <input type="hidden" name="next" value="{{ next }}">
 </form>
-<p><em>Si vous n'avez pas encore de compte, il faut en créer un en cliquant sur le lien ci-dessous</em></p>
-<p><a href="{% url 'inscription' %}">Créer mon compte</a></p>
+{% if administration.clos %}
+  <p><em>Le sondage étant clos, il n'est plus possible de créer un compte.</em></p>
+{% else %}
+  <p><em>Si vous n'avez pas encore de compte, il faut en créer un en cliquant sur le lien ci-dessous</em></p>
+  <p><a href="{% url 'inscription' %}">Créer mon compte</a></p>
+{% endif %}
 <p><a href="{% url 'password_reset' %}">Mot de passe perdu ?</a></p>
 
 

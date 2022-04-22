@@ -9,8 +9,8 @@ from django.contrib.auth.models import AbstractUser, UserManager, AnonymousUser,
 class Administration(models.Model):
     """Informations globales du sondage"""
     TROP_TOT=0
-    TROP_TARD=1
-    OUVERT=2
+    OUVERT=1
+    TROP_TARD=2
     nom=models.CharField(max_length=150, default="Sondage Anonyme") # affiché en haut de chaque page
     debut=models.DateTimeField(default=None, null=True, blank=True)      # début de la période de sondage
     fin=models.DateTimeField(default=None, null=True, blank=True)       # fin de cette période
@@ -40,12 +40,20 @@ votre compte nominatif et votre compte anonyme. Celui-ci ne peut, techniquement,
         verbose_name_plural="Administration"
 
     @property
-    def ouvert(self):
+    def etat(self):
         if self.debut and timezone.now() < self.debut:
             return self.TROP_TOT
         if self.fin and timezone.now()>self.fin:
             return self.TROP_TARD
         return self.OUVERT
+
+    @property
+    def clos(self):
+        return self.etat==self.TROP_TARD
+
+    @property
+    def ouvert(self):
+        return self.etat==self.OUVERT
 
 def get_administration():
         administration, created=Administration.objects.get_or_create(pk=1)
@@ -98,13 +106,19 @@ class User(AbstractUser):
     valide=models.BooleanField(default=False)      # indique si le participant a été validé par un administrateur
     cle_choisie=models.BooleanField(default=False) # indique si la phrase clef a été choisie
     anonyme=models.OneToOneField("Anonyme", default=None, null=True, blank=True, on_delete=models.SET_NULL)
+    admin_emails=models.BooleanField(default=False) # compte admin ayant accès à la validation des comptes nominatifs
+    admin_stats=models.BooleanField(default=False) # compte admin ayant accès aux statistiques durant le sondage
     objects = UserManager()
 
     class Meta():
         constraints=[
-            models.CheckConstraint(check=models.Q(is_staff=False)|models.Q(cle_choisie=False,valide=False), name="pas de compte mixte"),
+            models.CheckConstraint(check=models.Q(is_staff=False, admin_emails=False, admin_stats=False)|models.Q(cle_choisie=False,valide=False), name="pas de compte mixte"),
             models.CheckConstraint(check=models.Q(cle_choisie=False)|models.Q(valide=True), name="pas de compte anonyme sans validation"),
             ]
+
+    @property
+    def admin(self):
+        return self.is_staff or self.admin_stats or self.admin_emails
 
     def hash(self, phrase):
         return hashlib.sha256((phrase+self.alea).encode("UTF-8")).hexdigest()[0:10]

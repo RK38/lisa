@@ -61,19 +61,20 @@
       </tr>
     {% endfor %}
   </table>
-  {% if administration.ouvert == administration.OUVERT %}
+  {% if administration.ouvert %}
     <button type="submit">Enregistrer</button>
     {% endif %}
 </form>
 
-{% if etape.numero_precedent %}
-  <p><a href={% url 'etape' etape.numero_precedent %}>Étape précédente</a></p>
-{% endif %}
-    {% comment %}
-    {% if etape.numero_suivant %}
-    <!--  <p><a href={% url 'etape' etape.numero_suivant %}>Étape suivante</a></p>
-    {% else %}
-      <p><a href={% url 'fin' %}>Fin du sondage</a></p>-->
+  {% if etape.numero_precedent %}
+    <p><a href={% url 'etape' etape.numero_precedent %}>Étape précédente</a></p>
+  {% endif %}
+  {% if etape.numero_suivant %}
+    {% if administration.clos %}
+      <p><a href={% url 'etape' etape.numero_suivant %}>Étape suivante</a></p>
     {% endif %}
-    {% endcomment %}
+  {% else %}
+    <p><a href={% url 'fin' %}>Fin du sondage</a></p>
+  {% endif %}
+
 {% endblock %}

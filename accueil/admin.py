@@ -10,8 +10,7 @@ class AdministrationAdmin(admin.ModelAdmin):
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display=["email", "valide", "cle_choisie", "is_staff"]
-    list_editable=['valide']
+    list_display=["email", "valide", "cle_choisie", "is_staff", "admin_emails", "admin_stats"]
     list_search=['email']
 
     def save_model(self, request, obj, form, change):

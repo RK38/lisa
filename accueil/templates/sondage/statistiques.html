@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Résultats du sondage</h2>
+<p><b>Nombre de participants :</b> {{nombre_anonymes}}</p>
+{% if user.admin_stats or administration.clos %}
+<p style="border:solid 1px; padding: 3px; background-color: #BFC"><b>Mode d'emploi :</b> Les jeux de boutons radio ne posent aucune difficulté d'interprétation puisque
+  chaque participant sélectionne un et un seul bouton. Il n'en va pas de même pour les jeux de cases à cocher, dont un participant peut cocher plusieurs cases. Aussi est-il possible,
+  ci-dessous, de sélectionner une ou plusieurs cases d'un jeu. Vous verrez alors combien de personnes ont coché au moins une de ces cases ainsi que le nombre
+  de personnes qui ont coché toutes ces cases.
+</p>
+<ul>
+  {% for etape in etapes %}
+    <b>{{etape}}</b><br>
+    <ul>
+      {% for casesacocher in etape.casesacochers_s %}
+      <li>
+        <b>{{casesacocher}}</b> : {{casesacocher.explicatif}}
+        {% if casesacocher.unique %}
+          <ul>
+            {% for option in casesacocher.options_s %}
+              <li>{{ option }}: {{option.nombre}}</li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <ul style="list-style-type: none ; padding : 0 ; marging : 0;" class="groupe_cb" id="groupe_cb_{{casesacocher.id}}">
+            {% for option in casesacocher.options_s %}
+              <li><input type="checkbox" id=checkbox_{{option.id}} class="checkbox" id_option={{option.id}} id_casesacocher="{{casesacocher.id}}"></input><label for=checkbox_{{option.id}}>{{ option }}: {{option.nombre}}</label></li>
+            {% endfor %}
+          </ul>
+          <p><div id="au_moins_une_{{casesacocher.id}}" style="background-color: #6BF;margin-bottom: 2px;">
+            </div>
+            <div id="toutes_{{casesacocher.id}}" style="background-color:#FB6;">
+            </div>
+          </p>
+        {% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+  {% endfor %}
+</ul>
+
+{% load static %}
+<script src = "{% static 'js/jquery-3.6.0.min.js' %}"></script>
+
+<script>
+  $(document).ready(function()
+    {
+      $(".checkbox").change(effectif);
+
+      function getCookie(name) {
+					var cookieValue = null;
+					if (document.cookie && document.cookie != '') {
+							var cookies = document.cookie.split(';');
+							for (var i = 0; i < cookies.length; i++) {
+									var cookie = jQuery.trim(cookies[i]);
+									// Does this cookie string begin with the name we want?
+									if (cookie.substring(0, name.length + 1) == (name + '=')) {
+											cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+											break;
+									}
+							}
+					}
+					return cookieValue;
+			};
+
+      function csrfSafeMethod(method) {
+          // these HTTP methods do not require CSRF protection
+          return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+      }
+
+      function effectif()
+        {
+          id_casesacocher=""+$(this).attr('id_casesacocher');
+          checkboxes=$("#groupe_cb_"+id_casesacocher).find("input").filter(":checked");
+          if (checkboxes.length==0){
+            $("#au_moins_une_"+id_casesacocher).text("");
+            $("#toutes_"+id_casesacocher).text("");
+          } else {
+          id_options="";
+          checkboxes.each(function(index, element){
+            id_option=$(element).attr("id_option");
+            id_options+=(id_option+";");
+          });
+
+          var csrftoken = getCookie('csrftoken');
+
+          $.ajaxSetup({
+  				    beforeSend: function(xhr, settings) {
+  				        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+  				            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+  				        }
+  				    }
+  				});
+
+          $.ajax({
+  					url: '/effectif',
+  					data: {id_casesacocher: id_casesacocher, id_options: id_options},
+  					type: 'GET',
+  					success: function($data, $textStatus, $XMLHttpRequest){
+  						$("#au_moins_une_"+id_casesacocher).text("Au moins une : "+$data["au_moins_une"]);
+              $("#toutes_"+id_casesacocher).text("Toutes : "+ $data["toutes"]);
+  					}
+  				});
+          };
+        };
+    });
+</script>
+{% endif %}
+{% endblock %}

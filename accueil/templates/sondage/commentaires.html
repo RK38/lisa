@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% if user.admin_stats %}
+<h2>Commentaires</h2>
+<ul>
+  {% for anonyme in anonymes %}
+  <li><b>{{forloop.counter}}</b>
+    <ul>
+    {% for commentaire in anonyme.commentaires %}
+      <li>
+        <b>{{commentaire.etape}}</b>{{commentaire.commentaire|linebreaks}}
+      </li>
+    {% endfor %}
+  </ul>
+</li>
+  {% endfor %}
+</ul>
+{% endif %}
+{% endblock %}

@@ -35,5 +35,8 @@ urlpatterns = [
     path("etape/<int:numero>", s_views.EtapeView.as_view(), name="etape"),
     path("fin", login_required(TemplateView.as_view(template_name="sondage/fin.html")), name="fin"),
     path("resultats", s_views.ResultatView.as_view(), name="resultats"),
+    path("statistiques", s_views.StatistiqueView.as_view(), name="statistiques"),
+    path("effectif", s_views.ajaxEffectif),
+    path("commentaires", s_views.CommentaireView.as_view(), name="commentaires"),
     path('pages/', include('django.contrib.flatpages.urls')),
     ]

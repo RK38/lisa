@@ -2,9 +2,17 @@
 
 {% block content %}
 <h2>Phrase secrète</h2>
+{% if administration.ouvert %}
 <p>Indiquez ainsi votre phrase secrète pour vous connecter à votre compte anonyme et ainsi pouvoir
   compléter ou modifier vos réponses.
 </p>
+{% endif %}
+{% if administration.clos %}
+<p>
+  Pour voir les résultats, cliquez simplement sur le lien ci-dessus.
+  Indiquez ainsi votre phrase secrète pour vous connecter à votre compte anonyme et ainsi revoir vos réponses.
+</p>
+{% endif %}
 
 <form method = "post" action = "">
     {% csrf_token %}

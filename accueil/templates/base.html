@@ -26,14 +26,18 @@
       {{user.email}} &nbsp; &nbsp;
     {% endif %}
     {% for page in flatpages %}
-        <a href="/pages{{ page.url }}">{{ page.title }}</a> &nbsp; &nbsp;
+        &nbsp; &nbsp; <a href="/pages{{ page.url }}">{{ page.title }}</a> &nbsp; &nbsp;
     {% endfor %}
-        <a href="{% url 'accueil' %}">Accueil</a>
+        &nbsp; &nbsp; <a href="{% url 'accueil' %}">Accueil</a>
     {% if user.is_authenticated %}
-      &nbsp; &nbsp; <a href="{% url 'deconnexion' %}">Déconnexion</a>&nbsp; &nbsp; <a href={% url 'resultats' %}>Résultats du sondage</a>&nbsp; &nbsp;
+      &nbsp; &nbsp; <a href="{% url 'deconnexion' %}">Déconnexion</a>&nbsp; &nbsp;
     {% endif %}
+    &nbsp; &nbsp; <a href={% url 'resultats' %}>Résultats du sondage</a>&nbsp; &nbsp;
     {% if user.is_authenticated and user.anonyme %}
-        &nbsp; &nbsp; Code contrôle : <span style="color:red;">{{user.anonyme.code}}</span>
+        &nbsp; &nbsp; Code contrôle : <span style="color:red;">{{user.anonyme.code}}</span>&nbsp; &nbsp;
+    {% endif %}
+    {% if user.is_authenticated and user.is_staff %}
+        &nbsp; &nbsp; <a href="admin/">Site admin</a>&nbsp; &nbsp;
     {% endif %}
   </div>
 
@@ -45,10 +49,10 @@
       <p>Sondage ouvert à partir du {{administration.debut}}</p>
     {% endif %}
   {% else %}
-  {% if administration.fin %}
-    <p>Sondage clos le {{administration.fin}}</p>
+    {% if administration.fin %}
+      <p>Sondage clos le {{administration.fin}}</p>
+      {% endif %}
     {% endif %}
-  {% endif %}
   {% if messages %}
   {% for message in messages %}
     <div {% class = "callout {{message.tags}}">
