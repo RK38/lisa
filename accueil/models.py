@@ -161,6 +161,9 @@ class Anonyme(models.Model):
     hash=models.CharField(max_length=10, primary_key=True) # hash alea + phrase
     hash_phrase=models.CharField(max_length=10, null=True, default=None, blank=True) # hash de la phrase seule. Permet de calculer le code de contrôle, dont la diffusion éventuelle ne compromet pas l'anonymat
 
+    class Meta:
+        ordering=["hash"]
+        
     @property
     def code(self):
         if self.hash_phrase==None:

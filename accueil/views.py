@@ -131,7 +131,7 @@ class CreerCompteForm(forms.ModelForm):
         email=cleaned_data["email"]
         email_confirmation=cleaned_data["email_confirmation"]
         if email != email_confirmation:
-            raise forms.ValidationError("L'email et l'email de confirmation en coïncident pas")
+            raise forms.ValidationError("L'email et l'email de confirmation ne coïncident pas")
         return cleaned_data
 
 class Inscription(generic.FormView):
@@ -172,7 +172,7 @@ class Inscription(generic.FormView):
                 email=user.email,
                 lien=self.request.build_absolute_uri('/validation'))
             mails_avertissement=[]
-            for superuser in User.objects.filter(is_staff=True):
+            for superuser in User.objects.filter(admin_emails=True):
                 mails_avertissement.append(
                     ["Nouveau compte",
                      texte_avertissement,
