@@ -34,7 +34,7 @@ class Administration(models.Model):
 votre compte nominatif et votre compte anonyme. Celui-ci ne peut, techniquement,
 être rétabli que par vous-même lors d'une connexion ultérieure.</p>
 """)
-    avertissement_resultats=models.TextField(default="Les résultats seront disponibles sur cette pages dès la fin du sondage.")
+    avertissement_resultats=models.TextField(default="Les résultats seront disponibles sur cette page dès la fin du sondage.")
 
     class Meta:
         verbose_name_plural="Administration"
@@ -163,7 +163,7 @@ class Anonyme(models.Model):
 
     class Meta:
         ordering=["hash"]
-        
+
     @property
     def code(self):
         if self.hash_phrase==None:
